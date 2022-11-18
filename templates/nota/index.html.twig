@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notas
+{% endblock %}
+
+{% block body %}
+
+	<h3 class="text-center">{{ titulo}}</h3>
+	<br/>
+	<br/>
+	<div class="row">
+		{% if listarRegistradas %}
+			<div class="col-md-4">
+				<a class=" btn btn-primary" type="button" href="{{ path('app_nota_crear')}}">Crear Nota</a>
+				<br/>
+				<br/>
+			</div>
+			<div class="col-md-8">
+				<form class="form-sample" method="GET" action="{{ path('app_nota')}}">
+					<div class="form-group row">
+						<div class="col-sm-9">
+							<input type="text" name="filtro" class="form-control">
+						</div>
+						<button type="submit" class="btn btn-light" value="Buscar"/>Buscar</button>
+				    </div>
+			    </form>
+		    </div>
+        {% else %}
+        <div class="col-md-4"></div>
+        <div class="col-md-8">
+				<form class="form-sample" method="GET" action="{{ path('app_nota_eliminada')}}">
+					<div class="form-group row">
+						<div class="col-sm-9">
+							<input type="text" name="filtro" class="form-control">
+						</div>
+						<button type="submit" class="btn btn-light" value="Buscar"/>Buscar</button>
+				    </div>
+			    </form>
+		    </div>
+	{% endif %}
+</div>
+<div class="card">
+	<div class="card-body">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Título</th>
+					<th scope="col">Descripción</th>
+					<th scope="col">Tags</th>
+					<th scope="col">Visibilidad</th>
+					{% if not listarRegistradas %}
+						<th scope="col">Fecha de Eliminación</th>
+					{% endif %}
+					<th scope="col">Acciones</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% if notas|length == 0 %}
+					{% if not listarRegistradas %}
+						<tr>No existen notas eliminadas</tr>
+					{% else %}
+						<tr>No existen notas registradas</tr>
+					{% endif %}
+				{% else %}
+
+					{% set cont = 1 %}
+
+					{% for nota in notas %}
+						<tr>
+							<td>
+								{{ cont }}
+							</td>
+							<td>
+								{{ nota.titulo }}</td>
+							<td>
+								{{ nota.descripcion }}</td>
+							<td>
+								{{ nota.getTagsTitulo() }}</td>
+							{% if nota.publica %}
+								<td>Pública</td>
+							{% else %}
+								<td>Privada</td>
+							{% endif %}
+
+							{% if listarRegistradas %}
+								<td>
+									<a class="btn btn-warning" title="Editar" href="{{ path('app_nota_editar',{'id': nota.id })}}">Editar</a>
+									<a class="btn btn-danger" title="Eliminar" href="{{ path('app_nota_eliminar',{'id': nota.id })}}">Eliminar
+									</a>
+								</td>
+
+							{% else %}
+								<td>
+									{{ nota.fechaEliminada|date('Y-m-d H:i:s') }}</td>
+								<td>
+									<a class="btn btn-success" title="Recuperar" href="{{ path('app_nota_restaurar',{'id': nota.id })}}">Restaurar
+									</a>
+								</td>
+							{% endif %}
+
+						</tr>
+						{% set cont = cont + 1 %}
+
+					{% endfor %}
+				{% endif %}
+			</tbody>
+		</table>
+	</div>
+</div>{% endblock %}
