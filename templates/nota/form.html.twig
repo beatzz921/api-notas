@@ -1,26 +1,13 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 	<div class="card mx-auto" style="width:50%">
-		{% for type, flashMessage in app.session.flashbag.all() %}
-			{% if flashMessage.title is defined %}
-				<div class="card-header">
-					<div class="text-danger text-center">
-						<strong>{{ flashMessage.title }}</strong>
-						<br/>
-						{{ flashMessage.message }}
-					{% else %}
-						{{ type }}
-					{% endif %}
-				</div>
-			</div>
-		{% endfor %}
 		<div class="card-body">
 			<h3 class="card-title text-center">{{titulo}}</h3>
 			{% form_theme form 'bootstrap_4_layout.html.twig'%}
 			{{ form_start(form) }}
 			{{ form(form)}}
-			{{ form_end(form) }}
-
+				{{ form_end(form) }}
+			</div>
 		</div>
 	</div>
-</div>{% endblock %}
+{% endblock %}
