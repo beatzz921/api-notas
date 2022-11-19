@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	<div class="card mx-auto bg-light" style="width:50%">
+		<div class="card-body">
+			<h3 class="card-title text-center">{{titulo}}</h3>
+			{% form_theme form 'bootstrap_4_layout.html.twig' %}
+			{{ form_start(form) }}
+			{{ form(form) }}
+				{{ form_end(form) }}
+			</div>
+		</div>
+	{% endblock %}

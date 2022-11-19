@@ -6,6 +6,9 @@
 {% block body %}
 	{% if app.user %}
 		<div class="mb-3">
+			Si desea cambiar su contraseña hágalo <a href="{{ path('app_user_cambiar_contrasena') }}">aquí</a>
+		</div>
+		<div class="mb-3">
 			Ud. se encuentra logueado en la aplicación como
 			{{ app.user.username }}, desea 
 			<a href="{{ path('app_logout') }}">Salir</a>?

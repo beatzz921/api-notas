@@ -37,6 +37,7 @@ security:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/nota, roles: ROLE_USER }
         - { path: ^/tag, roles: ROLE_USER }
+        - { path: ^/user/cambiar_contrasena, roles: ROLE_USER }
         
     role_hierarchy:
             ROLE_ADMIN:  ROLE_USER
