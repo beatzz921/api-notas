@@ -22,12 +22,18 @@ class NotaController extends AbstractController
         $listarRegistradas = true;
         $notas = [];
         $arrayUsuarioId = implode([$usuario->getId()]);
-        
+
         if (isset($_GET['filtro'])) {
             $filtro = $_GET['filtro'];
-            $notas = $notaRepository->filtrar($filtro, false, $usuario);
-            $notasPublicas = $notaRepository->findNotasPublicas(false, $arrayUsuarioId);
-            $notas = array_merge($notas, $notasPublicas);
+            if ($filtro != "") {
+                $notas = $notaRepository->filtrar($filtro, false, $usuario);
+                $notasPublicas = $notaRepository->filtrarNotasPublicas($filtro, false, $arrayUsuarioId);
+                $notas = array_merge($notas, $notasPublicas);
+            } else {
+                $notas = $notaRepository->findBy(array('eliminada' => false, 'usuario' => $usuario));
+                $notasPublicas = $notaRepository->findNotasPublicas(false, $arrayUsuarioId);
+                $notas = array_merge($notas, $notasPublicas);
+            }
         } else {
             $notas = $notaRepository->findBy(array('eliminada' => false, 'usuario' => $usuario));
             $notasPublicas = $notaRepository->findNotasPublicas(false, $arrayUsuarioId);
@@ -121,10 +127,15 @@ class NotaController extends AbstractController
         $arrayUsuarioId = implode([$usuario->getId()]);
         if (isset($_GET['filtro'])) {
             $filtro = $_GET['filtro'];
-            $notas = $notaRepository->filtrar($filtro, true, $usuario);
-
-            $notasPublicas = $notaRepository->findNotasPublicas(true, $arrayUsuarioId);
-            $notas = array_merge($notas, $notasPublicas);
+            if ($filtro != "") {
+                $notas = $notaRepository->filtrar($filtro, true, $usuario);
+                $notasPublicas = $notaRepository->filtrarNotasPublicas($filtro, true, $arrayUsuarioId);
+                $notas = array_merge($notas, $notasPublicas);
+            } else {
+                $notas = $notaRepository->findBy(array('eliminada' => true, 'usuario' => $usuario));
+                $notasPublicas = $notaRepository->findNotasPublicas(true, $arrayUsuarioId);
+                $notas = array_merge($notas, $notasPublicas);
+            }
         } else {
             $notas = $notaRepository->findBy(array('eliminada' => true, 'usuario' => $usuario));
             $notasPublicas = $notaRepository->findNotasPublicas(true, $arrayUsuarioId);

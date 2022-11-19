@@ -96,16 +96,34 @@ class NotaRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function filtrarNotasPublicas(string $filtro, bool $eliminada, string $usuario): array
+    {
+        $qb = $this->createQueryBuilder('nota');
+        return $qb
+            ->innerJoin('nota.tags', 'tag')
+            ->innerJoin('nota.usuario', 'usuario')
+            ->where($qb->expr()->Like('nota.titulo', ":filtro"))
+            ->orWhere($qb->expr()->Like('nota.descripcion', ":filtro"))
+            ->orWhere($qb->expr()->Like('tag.titulo', ":filtro"))
+            ->andWhere($qb->expr()->notIn('usuario.id', $usuario))
+            ->andWhere('nota.eliminada =:eliminada')
+            ->andWhere('nota.publica = true')
+            ->setParameter('filtro', "%" . $filtro . "%")
+            ->setParameter('eliminada', $eliminada)
+            ->orderBy('nota.titulo', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findNotasPublicas(bool $eliminada, string $usuario): array
     {
         $qb = $this->createQueryBuilder('nota');
         return $qb
-            ->innerJoin('nota.usuario','usuario')
+            ->innerJoin('nota.usuario', 'usuario')
             ->Where($qb->expr()->notIn('usuario.id', $usuario))
             ->andWhere('nota.publica = true')
             ->andWhere('nota.eliminada =:eliminada')
             ->setParameter('eliminada', $eliminada)
-            // ->setParameter('usuario', $usuario)
             ->orderBy('nota.titulo', 'ASC')
             ->getQuery()
             ->getResult();

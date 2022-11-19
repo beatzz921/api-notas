@@ -43,7 +43,6 @@
 			<th scope="col">Título</th>
 			<th scope="col">Descripción</th>
 			<th scope="col">Tags</th>
-			<th scope="col">Visibilidad</th>
 			{% if not listarRegistradas %}
 				<th scope="col">Fecha de Eliminación</th>
 			{% endif %}
@@ -72,12 +71,6 @@
 						{{ nota.descripcion }}</td>
 					<td>
 						{{ nota.getTagsTitulo() }}</td>
-					{% if nota.publica %}
-						<td>Pública</td>
-					{% else %}
-						<td>Privada</td>
-					{% endif %}
-
 					{% if listarRegistradas %}
 						{% if app.user == nota.usuario %}
 							<td>
