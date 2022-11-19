@@ -41,7 +41,7 @@ class ApiController extends AbstractFOSRestController
             is_null($request->get('descripcion')) or
             is_null($request->get('tags')) or
             is_null($request->get('publica') or
-            is_null($request->get('usuario')))
+                is_null($request->get('usuario')))
         ) {
             return new JsonResponse(['message' => 'Faltan parámetros en la petición', 'code' => 400, 'status' => 'error']);
         } else {
@@ -99,7 +99,7 @@ class ApiController extends AbstractFOSRestController
         $id  = $request->get('id');
         $nota = $notaRepository->findOneById($id);
 
-        if (Is_null($nota)) {
+        if (is_null($nota)) {
             return new JsonResponse(['message' => 'No se ha encontrado la nota', 'code' => 404, 'satus' => 'error']);
         } else {
             if (
@@ -144,6 +144,61 @@ class ApiController extends AbstractFOSRestController
                 $em->flush();
 
                 return new JsonResponse(['message' => 'Se ha editado la nota satisfactoriamente', 'code' => 201, 'satus' => 'success']);
+            }
+        }
+    }
+
+    /**
+     * @Rest\Post("/nota/eliminar", name="nota_eliminar")
+     */
+    public function eliminarAction(Request $request, NotaRepository $notaRepository): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        if (
+            is_null($request->get('id'))
+        ) {
+            return new JsonResponse(['message' => 'Faltan parámetros en la petición', 'code' => 400, 'status' => 'error']);
+        } else {
+            $id  = $request->get('id');
+            $nota = $notaRepository->findOneById($id);
+
+            if (is_null($nota)) {
+                return new JsonResponse(['message' => 'No se ha encontrado la nota', 'code' => 404, 'satus' => 'error']);
+            } else {
+                $nota->setEliminada(true);
+                $fecha = new \DateTime(null, new \DateTimeZone('America/Havana'));
+                $nota->setFechaEliminada($fecha);
+                $em->persist($nota);
+                $em->flush();
+
+                return new JsonResponse(['message' => 'Se ha eliminado la nota satisfactoriamente', 'code' => 201, 'status' => 'success']);
+            }
+        }
+    }
+
+    /**
+     * @Rest\Post("/nota/restaurar", name="nota_restaurar")
+     */
+    public function restaurarAction(Request $request, NotaRepository $notaRepository): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+        if (
+            is_null($request->get('id'))
+        ) {
+            return new JsonResponse(['message' => 'Faltan parámetros en la petición', 'code' => 400, 'status' => 'error']);
+        } else {
+            $id  = $request->get('id');
+            $nota = $notaRepository->findOneById($id);
+
+            if (is_null($nota)) {
+                return new JsonResponse(['message' => 'No se ha encontrado la nota', 'code' => 404, 'satus' => 'error']);
+            } else {
+                $nota->setEliminada(false);
+                $nota->setFechaEliminada(null);
+                $em->persist($nota);
+                $em->flush();
+
+                return new JsonResponse(['message' => 'Se ha restaurado la nota satisfactoriamente', 'code' => 201, 'status' => 'success']);
             }
         }
     }
