@@ -83,4 +83,12 @@ class Tag
         return $this;
     }
 
+    public function serializar()
+    {
+        $objeto = [];
+        $objeto['id'] = $this->getId();
+        $objeto['titulo'] = $this->getTitulo();
+
+        return $objeto;
+    }
 }

@@ -147,7 +147,7 @@ class Nota
                 if ($index == 0) {
                     $titulos .= $tag->getTitulo();
                 } else {
-                    $titulos .= ', '.$tag->getTitulo();
+                    $titulos .= ', ' . $tag->getTitulo();
                 }
             }
         }
@@ -176,5 +176,25 @@ class Nota
         $this->usuario = $usuario;
 
         return $this;
+    }
+
+    public function serializar()
+    {
+        $objeto = [];
+
+        $objeto['id'] = $this->getId();
+        $objeto['titulo'] = $this->getTitulo();
+        $objeto['descripcion'] = $this->getDescripcion();
+        $objeto['publica'] = $this->getPublica() ? 'pública' : 'privada';
+        $objeto['eliminada'] = $this->getEliminada() ? 'sí' : 'no';
+        $objeto['fechaEliminada'] = $this->getFechaEliminada() ? $this->getFechaEliminada()->format('Y-m-d H:i:s') : '---';
+        $objeto['usuario'] = $this->getUsuario()->getUsername();
+        $objeto['tags'] = [];
+
+        foreach($this->getTags() as $tag){
+            $objeto['tags'][] = $tag->serializar();
+        }
+
+        return $objeto;
     }
 }
