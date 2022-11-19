@@ -21,11 +21,17 @@ class NotaController extends AbstractController
         $titulo = "Notas Registradas";
         $listarRegistradas = true;
         $notas = [];
+        $arrayUsuarioId = implode([$usuario->getId()]);
+        
         if (isset($_GET['filtro'])) {
             $filtro = $_GET['filtro'];
             $notas = $notaRepository->filtrar($filtro, false, $usuario);
+            $notasPublicas = $notaRepository->findNotasPublicas(false, $arrayUsuarioId);
+            $notas = array_merge($notas, $notasPublicas);
         } else {
             $notas = $notaRepository->findBy(array('eliminada' => false, 'usuario' => $usuario));
+            $notasPublicas = $notaRepository->findNotasPublicas(false, $arrayUsuarioId);
+            $notas = array_merge($notas, $notasPublicas);
         }
 
         return $this->render('nota/index.html.twig', [
@@ -112,11 +118,17 @@ class NotaController extends AbstractController
         $usuario = $this->getUser();
         $titulo = "Notas Eliminadas";
         $listarRegistradas = false;
+        $arrayUsuarioId = implode([$usuario->getId()]);
         if (isset($_GET['filtro'])) {
             $filtro = $_GET['filtro'];
             $notas = $notaRepository->filtrar($filtro, true, $usuario);
+
+            $notasPublicas = $notaRepository->findNotasPublicas(true, $arrayUsuarioId);
+            $notas = array_merge($notas, $notasPublicas);
         } else {
             $notas = $notaRepository->findBy(array('eliminada' => true, 'usuario' => $usuario));
+            $notasPublicas = $notaRepository->findNotasPublicas(true, $arrayUsuarioId);
+            $notas = array_merge($notas, $notasPublicas);
         }
 
         return $this->render('nota/index.html.twig', [

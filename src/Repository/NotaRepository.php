@@ -8,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @extends ServiceEntityRepository<Nota>
@@ -81,7 +82,7 @@ class NotaRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('nota');
         return $qb
-            ->innerJoin('nota.tags','tag')
+            ->innerJoin('nota.tags', 'tag')
             ->where($qb->expr()->Like('nota.titulo', ":filtro"))
             ->orWhere($qb->expr()->Like('nota.descripcion', ":filtro"))
             ->orWhere($qb->expr()->Like('tag.titulo', ":filtro"))
@@ -90,6 +91,21 @@ class NotaRepository extends ServiceEntityRepository
             ->setParameter('filtro', "%" . $filtro . "%")
             ->setParameter('eliminada', $eliminada)
             ->setParameter('usuario', $usuario)
+            ->orderBy('nota.titulo', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findNotasPublicas(bool $eliminada, string $usuario): array
+    {
+        $qb = $this->createQueryBuilder('nota');
+        return $qb
+            ->innerJoin('nota.usuario','usuario')
+            ->Where($qb->expr()->notIn('usuario.id', $usuario))
+            ->andWhere('nota.publica = true')
+            ->andWhere('nota.eliminada =:eliminada')
+            ->setParameter('eliminada', $eliminada)
+            // ->setParameter('usuario', $usuario)
             ->orderBy('nota.titulo', 'ASC')
             ->getQuery()
             ->getResult();
